@@ -1,0 +1,9 @@
+# 凭证与状态：绝不提交进公开仓库（只忽略仓库根目录下的这两个目录，
+# templates/credentials/ 里是示例文件，不受影响）
+/credentials/
+/state/
+*.pem
+*.key
+tokens.json
+*.bak
+__pycache__/

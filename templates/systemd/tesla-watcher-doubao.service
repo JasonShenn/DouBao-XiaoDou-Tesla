@@ -1,0 +1,20 @@
+# 占位符说明：<SERVER_USER> 是服务器登录用户名（如 ubuntu）；
+# <APP_NAME> 是应用名/部署代号（英文，如 DoubaoTesla），服务名、目录名共用它。
+# 全部占位符对照见 README 第 1 节。
+[Unit]
+Description=Tesla alert watcher (<APP_NAME>)
+After=fleet-telemetry-doubao-consumer.service
+Wants=fleet-telemetry-doubao-consumer.service
+
+[Service]
+Type=simple
+User=<SERVER_USER>
+WorkingDirectory=/home/<SERVER_USER>/fleet-telemetry-<APP_NAME>/consumer
+ExecStart=/usr/bin/python3 /home/<SERVER_USER>/fleet-telemetry-<APP_NAME>/consumer/tesla_watcher.py
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

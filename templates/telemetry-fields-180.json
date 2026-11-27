@@ -1,0 +1,544 @@
+{
+  "fields": {
+    "ACChargingEnergyIn": {
+      "interval_seconds": 60
+    },
+    "ACChargingPower": {
+      "interval_seconds": 60
+    },
+    "AutoSeatClimateLeft": {
+      "interval_seconds": 60
+    },
+    "AutoSeatClimateRight": {
+      "interval_seconds": 60
+    },
+    "AutomaticBlindSpotCamera": {
+      "interval_seconds": 10
+    },
+    "AutomaticEmergencyBrakingOff": {
+      "interval_seconds": 10
+    },
+    "BMSState": {
+      "interval_seconds": 60
+    },
+    "BatteryHeaterOn": {
+      "interval_seconds": 60
+    },
+    "BatteryLevel": {
+      "interval_seconds": 60
+    },
+    "BlindSpotCollisionWarningChime": {
+      "interval_seconds": 10
+    },
+    "BmsFullchargecomplete": {
+      "interval_seconds": 60
+    },
+    "BrakePedal": {
+      "interval_seconds": 10
+    },
+    "BrakePedalPos": {
+      "interval_seconds": 10
+    },
+    "BrickVoltageMax": {
+      "interval_seconds": 60
+    },
+    "BrickVoltageMin": {
+      "interval_seconds": 60
+    },
+    "CabinOverheatProtectionMode": {
+      "interval_seconds": 60
+    },
+    "CabinOverheatProtectionTemperatureLimit": {
+      "interval_seconds": 60
+    },
+    "ChargeAmps": {
+      "interval_seconds": 1
+    },
+    "ChargeCurrentRequest": {
+      "interval_seconds": 60
+    },
+    "ChargeCurrentRequestMax": {
+      "interval_seconds": 60
+    },
+    "ChargeEnableRequest": {
+      "interval_seconds": 60
+    },
+    "ChargeLimitSoc": {
+      "interval_seconds": 60
+    },
+    "ChargePort": {
+      "interval_seconds": 60
+    },
+    "ChargePortColdWeatherMode": {
+      "interval_seconds": 60
+    },
+    "ChargePortDoorOpen": {
+      "interval_seconds": 60
+    },
+    "ChargePortLatch": {
+      "interval_seconds": 60
+    },
+    "ChargeRateMilePerHour": {
+      "interval_seconds": 60
+    },
+    "ChargeState": {
+      "interval_seconds": 60
+    },
+    "ChargerPhases": {
+      "interval_seconds": 60
+    },
+    "ChargerVoltage": {
+      "interval_seconds": 60
+    },
+    "ChargingCableType": {
+      "interval_seconds": 60
+    },
+    "ClimateKeeperMode": {
+      "interval_seconds": 60
+    },
+    "ClimateSeatCoolingFrontLeft": {
+      "interval_seconds": 60
+    },
+    "ClimateSeatCoolingFrontRight": {
+      "interval_seconds": 60
+    },
+    "CruiseFollowDistance": {
+      "interval_seconds": 10
+    },
+    "CruiseSetSpeed": {
+      "interval_seconds": 10
+    },
+    "CurrentLimitMph": {
+      "interval_seconds": 10
+    },
+    "DCChargingEnergyIn": {
+      "interval_seconds": 60
+    },
+    "DCChargingPower": {
+      "interval_seconds": 60
+    },
+    "DCDCEnable": {
+      "interval_seconds": 60
+    },
+    "DefrostForPreconditioning": {
+      "interval_seconds": 60
+    },
+    "DefrostMode": {
+      "interval_seconds": 60
+    },
+    "DestinationLocation": {
+      "interval_seconds": 10
+    },
+    "DestinationName": {
+      "interval_seconds": 10
+    },
+    "DetailedChargeState": {
+      "interval_seconds": 1
+    },
+    "DiAxleSpeedF": {
+      "interval_seconds": 60
+    },
+    "DiAxleSpeedR": {
+      "interval_seconds": 60
+    },
+    "DiAxleSpeedREL": {
+      "interval_seconds": 60
+    },
+    "DiAxleSpeedRER": {
+      "interval_seconds": 60
+    },
+    "DiHeatsinkTF": {
+      "interval_seconds": 60
+    },
+    "DiHeatsinkTR": {
+      "interval_seconds": 60
+    },
+    "DiHeatsinkTREL": {
+      "interval_seconds": 60
+    },
+    "DiHeatsinkTRER": {
+      "interval_seconds": 60
+    },
+    "DiInverterTF": {
+      "interval_seconds": 60
+    },
+    "DiInverterTR": {
+      "interval_seconds": 60
+    },
+    "DiInverterTREL": {
+      "interval_seconds": 60
+    },
+    "DiInverterTRER": {
+      "interval_seconds": 60
+    },
+    "DiMotorCurrentF": {
+      "interval_seconds": 60
+    },
+    "DiMotorCurrentR": {
+      "interval_seconds": 60
+    },
+    "DiMotorCurrentREL": {
+      "interval_seconds": 60
+    },
+    "DiMotorCurrentRER": {
+      "interval_seconds": 60
+    },
+    "DiSlaveTorqueCmd": {
+      "interval_seconds": 60
+    },
+    "DiStateF": {
+      "interval_seconds": 60
+    },
+    "DiStateR": {
+      "interval_seconds": 60
+    },
+    "DiStateREL": {
+      "interval_seconds": 60
+    },
+    "DiStateRER": {
+      "interval_seconds": 60
+    },
+    "DiStatorTempF": {
+      "interval_seconds": 60
+    },
+    "DiStatorTempR": {
+      "interval_seconds": 60
+    },
+    "DiStatorTempREL": {
+      "interval_seconds": 60
+    },
+    "DiStatorTempRER": {
+      "interval_seconds": 60
+    },
+    "DiTorqueActualF": {
+      "interval_seconds": 60
+    },
+    "DiTorqueActualR": {
+      "interval_seconds": 60
+    },
+    "DiTorqueActualREL": {
+      "interval_seconds": 60
+    },
+    "DiTorqueActualRER": {
+      "interval_seconds": 60
+    },
+    "DiTorquemotor": {
+      "interval_seconds": 60
+    },
+    "DiVBatF": {
+      "interval_seconds": 60
+    },
+    "DiVBatR": {
+      "interval_seconds": 60
+    },
+    "DiVBatREL": {
+      "interval_seconds": 60
+    },
+    "DiVBatRER": {
+      "interval_seconds": 60
+    },
+    "DoorState": {
+      "interval_seconds": 1
+    },
+    "DriveRail": {
+      "interval_seconds": 10
+    },
+    "DriverSeatBelt": {
+      "interval_seconds": 60
+    },
+    "DriverSeatOccupied": {
+      "interval_seconds": 60
+    },
+    "EfficiencyPackage": {
+      "interval_seconds": 60
+    },
+    "EmergencyLaneDepartureAvoidance": {
+      "interval_seconds": 10
+    },
+    "EnergyRemaining": {
+      "interval_seconds": 60
+    },
+    "EstBatteryRange": {
+      "interval_seconds": 60
+    },
+    "EstimatedHoursToChargeTermination": {
+      "interval_seconds": 60
+    },
+    "ExpectedEnergyPercentAtTripArrival": {
+      "interval_seconds": 10
+    },
+    "FastChargerPresent": {
+      "interval_seconds": 60
+    },
+    "FastChargerType": {
+      "interval_seconds": 60
+    },
+    "ForwardCollisionWarning": {
+      "interval_seconds": 10
+    },
+    "Gear": {
+      "interval_seconds": 10
+    },
+    "GpsHeading": {
+      "interval_seconds": 10
+    },
+    "GpsState": {
+      "interval_seconds": 10
+    },
+    "HvacACEnabled": {
+      "interval_seconds": 60
+    },
+    "HvacAutoMode": {
+      "interval_seconds": 60
+    },
+    "HvacFanSpeed": {
+      "interval_seconds": 60
+    },
+    "HvacFanStatus": {
+      "interval_seconds": 60
+    },
+    "HvacLeftTemperatureRequest": {
+      "interval_seconds": 60
+    },
+    "HvacPower": {
+      "interval_seconds": 60
+    },
+    "HvacRightTemperatureRequest": {
+      "interval_seconds": 60
+    },
+    "HvacSteeringWheelHeatAuto": {
+      "interval_seconds": 60
+    },
+    "HvacSteeringWheelHeatLevel": {
+      "interval_seconds": 60
+    },
+    "Hvil": {
+      "interval_seconds": 60
+    },
+    "IdealBatteryRange": {
+      "interval_seconds": 60
+    },
+    "InsideTemp": {
+      "interval_seconds": 60
+    },
+    "IsolationResistance": {
+      "interval_seconds": 60
+    },
+    "LaneDepartureAvoidance": {
+      "interval_seconds": 10
+    },
+    "LateralAcceleration": {
+      "interval_seconds": 10
+    },
+    "LifetimeEnergyUsed": {
+      "interval_seconds": 60
+    },
+    "LifetimeEnergyUsedDrive": {
+      "interval_seconds": 60
+    },
+    "LightsHazardsActive": {
+      "interval_seconds": 10
+    },
+    "LightsHighBeams": {
+      "interval_seconds": 10
+    },
+    "LightsTurnSignal": {
+      "interval_seconds": 10
+    },
+    "LocatedAtFavorite": {
+      "interval_seconds": 10
+    },
+    "LocatedAtHome": {
+      "interval_seconds": 10
+    },
+    "LocatedAtWork": {
+      "interval_seconds": 10
+    },
+    "Location": {
+      "interval_seconds": 10
+    },
+    "Locked": {
+      "interval_seconds": 1
+    },
+    "LongitudinalAcceleration": {
+      "interval_seconds": 10
+    },
+    "MediaAudioVolume": {
+      "interval_seconds": 60
+    },
+    "MediaAudioVolumeIncrement": {
+      "interval_seconds": 60
+    },
+    "MediaAudioVolumeMax": {
+      "interval_seconds": 60
+    },
+    "MediaNowPlayingAlbum": {
+      "interval_seconds": 60
+    },
+    "MediaNowPlayingArtist": {
+      "interval_seconds": 60
+    },
+    "MediaNowPlayingDuration": {
+      "interval_seconds": 60
+    },
+    "MediaNowPlayingElapsed": {
+      "interval_seconds": 60
+    },
+    "MediaNowPlayingStation": {
+      "interval_seconds": 60
+    },
+    "MediaNowPlayingTitle": {
+      "interval_seconds": 60
+    },
+    "MediaPlaybackSource": {
+      "interval_seconds": 60
+    },
+    "MediaPlaybackStatus": {
+      "interval_seconds": 60
+    },
+    "MilesToArrival": {
+      "interval_seconds": 10
+    },
+    "MinutesToArrival": {
+      "interval_seconds": 10
+    },
+    "ModuleTempMax": {
+      "interval_seconds": 60
+    },
+    "ModuleTempMin": {
+      "interval_seconds": 60
+    },
+    "NotEnoughPowerToHeat": {
+      "interval_seconds": 60
+    },
+    "NumBrickVoltageMax": {
+      "interval_seconds": 60
+    },
+    "NumBrickVoltageMin": {
+      "interval_seconds": 60
+    },
+    "NumModuleTempMax": {
+      "interval_seconds": 60
+    },
+    "NumModuleTempMin": {
+      "interval_seconds": 60
+    },
+    "Odometer": {
+      "interval_seconds": 60
+    },
+    "OriginLocation": {
+      "interval_seconds": 10
+    },
+    "OutsideTemp": {
+      "interval_seconds": 60
+    },
+    "PackCurrent": {
+      "interval_seconds": 60
+    },
+    "PackVoltage": {
+      "interval_seconds": 60
+    },
+    "PassengerSeatBelt": {
+      "interval_seconds": 60
+    },
+    "PedalPosition": {
+      "interval_seconds": 10
+    },
+    "PreconditioningEnabled": {
+      "interval_seconds": 60
+    },
+    "RatedRange": {
+      "interval_seconds": 60
+    },
+    "RearDefrostEnabled": {
+      "interval_seconds": 60
+    },
+    "RearSeatHeaters": {
+      "interval_seconds": 60
+    },
+    "RouteLastUpdated": {
+      "interval_seconds": 10
+    },
+    "RouteTrafficMinutesDelay": {
+      "interval_seconds": 10
+    },
+    "ScheduledChargingMode": {
+      "interval_seconds": 60
+    },
+    "ScheduledChargingPending": {
+      "interval_seconds": 60
+    },
+    "ScheduledChargingStartTime": {
+      "interval_seconds": 60
+    },
+    "SeatHeaterLeft": {
+      "interval_seconds": 60
+    },
+    "SeatHeaterRearCenter": {
+      "interval_seconds": 60
+    },
+    "SeatHeaterRearLeft": {
+      "interval_seconds": 60
+    },
+    "SeatHeaterRearRight": {
+      "interval_seconds": 60
+    },
+    "SeatHeaterRight": {
+      "interval_seconds": 60
+    },
+    "SeatVentEnabled": {
+      "interval_seconds": 60
+    },
+    "Soc": {
+      "interval_seconds": 60
+    },
+    "SpeedLimitMode": {
+      "interval_seconds": 10
+    },
+    "SpeedLimitWarning": {
+      "interval_seconds": 10
+    },
+    "SuperchargerSessionTripPlanner": {
+      "interval_seconds": 60
+    },
+    "TimeToFullCharge": {
+      "interval_seconds": 60
+    },
+    "TpmsHardWarnings": {
+      "interval_seconds": 1
+    },
+    "TpmsLastSeenPressureTimeFl": {
+      "interval_seconds": 1
+    },
+    "TpmsLastSeenPressureTimeFr": {
+      "interval_seconds": 1
+    },
+    "TpmsLastSeenPressureTimeRl": {
+      "interval_seconds": 1
+    },
+    "TpmsLastSeenPressureTimeRr": {
+      "interval_seconds": 1
+    },
+    "TpmsPressureFl": {
+      "interval_seconds": 1
+    },
+    "TpmsPressureFr": {
+      "interval_seconds": 1
+    },
+    "TpmsPressureRl": {
+      "interval_seconds": 1
+    },
+    "TpmsPressureRr": {
+      "interval_seconds": 1
+    },
+    "TpmsSoftWarnings": {
+      "interval_seconds": 1
+    },
+    "VehicleName": {
+      "interval_seconds": 1
+    },
+    "VehicleSpeed": {
+      "interval_seconds": 10
+    }
+  }
+}
