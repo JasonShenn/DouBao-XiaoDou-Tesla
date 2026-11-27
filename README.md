@@ -25,6 +25,7 @@
 - [阶段 12. 通知文案自定义](#阶段-12-通知文案自定义)
 - [阶段 13. 实时查车与车辆控制](#阶段-13-实时查车与车辆控制)
 - [阶段 14. 定时汇报与低胎压（可选）](#阶段-14-定时汇报与低胎压可选)
+- [附录 A：免费与收费部署方案（分类对照）](#附录-a免费与收费部署方案分类对照)
 - [排障](#排障)
 - [安全提醒](#安全提醒)
 - [检查清单](#检查清单)
@@ -43,7 +44,9 @@
 | `<SERVER_USER>` | 服务器登录用户名 | 一般是 `ubuntu` 或 `root` |
 | `<DOMAIN>` | 主域名 | 自己注册的域名 |
 | `<APP_DOMAIN>` | 特斯拉应用域名（放公钥、做回调） | `<DOMAIN>` 的子域名，如 `app.<DOMAIN>` |
-| `<TELEMETRY_DOMAIN>` | 推流域名（只接车的数据） | `<DOMAIN>` 的子域名，如 `telemetry.<DOMAIN>` |
+| `<TELEMETRY_DOMAIN>` | 推流域名（只接车的数据） | `<DOMAIN>` 的子域名，如 `telemetry.<DOMAIN>`；Funnel 路线时是 `<MACHINE_NAME>.<TAILNET_NAME>.ts.net` |
+| `<MACHINE_NAME>` | Funnel 路线：家里那台机器在 Tailscale 里的机器名 | Tailscale 管理后台 Machines 页，如 `homelab`；别用真实姓名、车牌 |
+| `<TAILNET_NAME>` | Funnel 路线：你的 tailnet 名 | Tailscale 管理后台，如 `tail1234`；完整地址是 `<MACHINE_NAME>.<TAILNET_NAME>.ts.net` |
 | `<APP_NAME>` | 应用名 / 部署代号 | 英文，如 `DoubaoTesla`；服务名、目录名共用它 |
 | `<CLIENT_ID>` | 特斯拉应用的 Client ID | 开发者后台建应用后显示 |
 | `<CLIENT_SECRET>` | 特斯拉应用的 Client Secret | 只显示一次，马上存 600 权限文件 |
@@ -247,6 +250,8 @@ curl -s https://fleet-api.prd.cn.vn.cloud.tesla.cn/api/1/partner_accounts -X POS
 ---
 
 ## 阶段 6. 服务器、域名、证书与分流
+
+> 不想租服务器？先看附录 A：免费与收费部署方案（分类对照）。Oracle 永久免费 VPS 与主线部署完全一样；Tailscale Funnel + 家里常开机器 0 元也能收推流，但入口做法不同（阶段 6–7 按附录 A.2.2 替换）。
 
 - 步骤 1：两个子域名各加一条 A 记录指向 `<SERVER_IP>`，TTL 设 600。
 - 步骤 2：云控制台安全组放行 443 端口入方向。
@@ -628,6 +633,129 @@ curl -sk https://127.0.0.1:4443/api/1/vehicles/<VIN>/command/flash_lights \
 
 ---
 
+## 附录 A：免费与收费部署方案（分类对照）
+
+> 本教程主线（阶段 6–14）用的是收费云服务器。下面是全部替代路线的分类：先看结论表，再按需看详细步骤。
+>
+> 一条硬约束（决定哪些路线能用）：收流服务是 mTLS——车子带着特斯拉签发的客户端证书来连，服务端要验这张证；服务端自己的证书也要对得上推流域名。TLS 握手必须从车子一路通到收流程序，中间不能有任何人替它终结 TLS。官方仓库 `config/config.go` 里写明了：`tls config is empty - telemetry server is mTLS only`，收流配置里 `tls` 一项必填，不能跑纯 HTTP。车子只连 443 端口。
+
+### 结论对照表
+
+| 方案 | 分类 | 花钱 | 能不能收推流 | 一句话 |
+|---|---|---|---|---|
+| 云服务器（本教程主线） | 收费 | 服务器 + 域名，按年付 | 能 | 最稳，推荐 |
+| Oracle 永久免费 VPS | 免费 | 0 元 | 能 | 免费服务器，部署与主线完全一样 |
+| Tailscale Funnel + 家里常开机器 | 免费 | 0 元 | 能（必须用 `--tcp` 透传模式） | 重点推荐的免费路线，见 A.2.2 |
+| Cloudflare Tunnel | 免费 | 隧道不要钱，域名一年几十块 | 不能收推流 | 在边缘终结 TLS，车子的客户端证书到不了收流程序；TCP 模式要访客装客户端，车子装不了 |
+| ngrok 免费档 | 免费 | 0 元 | 不能稳定收 | 地址和端口每次重启都变，推流配置写死域名跟不上 |
+| trycloudflare.com 临时隧道 | 免费 | 0 元 | 不能 | 地址每次重启都变，且是 HTTP 模式 |
+
+### A.1 收费方案
+
+#### A.1.1 云服务器（主线）
+
+- 买一台轻量应用服务器（腾讯云、阿里云等），2 核 2G 就够；再注册一个域名。
+- 花费：服务器一年通常一两百元起、域名一年几十块、证书免费（Let's Encrypt），以各厂商官网标价为准。
+- 部署：按本教程阶段 6–14 一步步走，不用改。
+- 为什么稳：服务器 24 小时在线、有固定公网 IP；推流、提醒、行程记录都不会因为家里电脑关机而断。
+
+### A.2 免费方案
+
+#### A.2.1 Oracle 永久免费 VPS（免费服务器）
+
+- Oracle 云有永久免费套餐，包含免费实例（AMD 或 ARM 架构），注册要绑卡验证（只做验证，不扣费）。
+- 部署：领到机器后，与主线完全一样，按阶段 6–14 走，什么都不用改——它就是一台不要钱的服务器。
+- 注意三点：免费 ARM 机型在热门区域经常没库存，要蹲；实例长期闲置可能被回收，上面要一直跑着服务；免费规则以 Oracle 官网页面为准，可能变。
+
+#### A.2.2 Tailscale Funnel + 家里常开机器（重点推荐，0 元）
+
+> 思路：收流服务、consumer、watcher、推送全跑在家里一台 24 小时开机的机器上（旧笔记本、NAS、树莓派 4 及以上都行）；Tailscale Funnel 负责把这台机器的 443 端口公开到公网，不用买服务器、不用买域名、不用开路由器端口、家里宽带没有公网 IP 也能用（Funnel 是向外建连，不受 CGNAT 影响）。
+>
+> 代价先讲清楚：这台机器必须一直开着。它一关机、断电、断网或休眠，推流就断，提醒和行程记录都会丢。服务器花钱买的其实就是“一直在线”。
+
+- 步骤 1：机器上装 Tailscale 并登录进同一个 tailnet。
+
+```bash
+curl -fsSL https://tailscale.com/install.sh | sh
+sudo tailscale up
+```
+
+- 步骤 2：在 Tailscale 管理后台开三样东西（只做一次）：MagicDNS 开启；DNS 页里 HTTPS Certificates 开启；Access Controls 里给这台机器加 funnel 属性（在策略文件里加一段 `nodeAttrs`，`attr` 写 `funnel`；或在控制台点“Add Funnel to policy”，效果一样）。
+
+```json
+{
+  "nodeAttrs": [
+    {
+      "target": ["autogroup:member"],
+      "attr": ["funnel"]
+    }
+  ]
+}
+```
+
+前置版本要求：Tailscale 1.38.3 或以上（建议 1.52 或以上，命令行语法在 1.52 改过）。官方文档：https://tailscale.com/kb/1311/tailscale-funnel
+
+- 步骤 3：给这台机器领一张证书（Let's Encrypt 签发，域名就是它的 tailnet 地址，90 天有效）。
+
+```bash
+sudo tailscale cert --cert-file /etc/tailscale-certs/<TELEMETRY_DOMAIN>.crt --key-file /etc/tailscale-certs/<TELEMETRY_DOMAIN>.key <TELEMETRY_DOMAIN>
+```
+
+这里 `<TELEMETRY_DOMAIN>` 换成这台机器的 tailnet 地址，格式是 `<MACHINE_NAME>.<TAILNET_NAME>.ts.net`（在管理后台 Machines 页能看到）。注意：机器名会进证书透明日志（公开可查），别在机器名里放真实姓名、车牌这类信息。
+
+- 步骤 4：收流配置改用 Funnel 模板 `templates/server_config.funnel-example.json`：`host` 仍是 `127.0.0.1`，`port` 仍是 `8445`，`tls` 里 `server_cert` / `server_key` 指向步骤 3 领到的两个文件。其他字段与主线模板一样。
+
+- 步骤 5：起 Funnel——关键：必须用 `--tcp` 透传模式，不能用默认的 HTTPS 模式。
+
+```bash
+sudo tailscale funnel --bg --tcp=443 tcp://127.0.0.1:8445
+```
+
+为什么必须是 `--tcp`：默认 HTTPS 模式是 Tailscale 替你终结 TLS，车子的客户端证书到不了收流程序，mTLS 在第一步就断了；`--tcp` 是原样透传 TCP，TLS 握手从车子一路通到收流程序，收流程序自己用步骤 3 的证书终结 TLS、验车子的客户端证书，和主线 nginx stream 的效果一样。Funnel 只接受 443、8443、10000 三个端口，车子只连 443，所以这里固定写 443。
+
+验证：`tailscale funnel status`，预期看到 `https://<MACHINE_NAME>.<TAILNET_NAME>.ts.net (Funnel on)`。
+
+- 步骤 6：阶段 8 下发推流配置时，`hostname` 写 `<MACHINE_NAME>.<TAILNET_NAME>.ts.net`；阶段 3 注册 partner 时，域名与 allowed origin 也用这个地址。阶段 1–5（建应用、密钥、partner、授权、虚拟钥匙）与部署方式无关，照原样做；阶段 2 的公钥文件只要放在“公网能打开的地址”就行，有域名按原教程，没有域名可以放在免费静态托管上；阶段 9–14（消费端、watcher、推送、定时汇报）也不变。
+
+- 步骤 7：证书续期（90 天有效，到期车子连不上）。模板 `templates/tailscale-cert-renew.sh` 已写好：每天跑一次即可，没到续期时间它不会重复领证；证书文件变了才替换并重启收流服务，没变不重启。
+
+```bash
+chmod +x templates/tailscale-cert-renew.sh
+# cron 里加一行（每天凌晨 3 点跑一次）
+0 3 * * * /home/<SERVER_USER>/fleet-telemetry-<APP_NAME>/tailscale-cert-renew.sh
+```
+
+- 步骤 8：家里机器防睡：系统设置里关掉睡眠、合盖不休眠、接通电源；Tailscale 与四个服务都设成开机自启（`systemctl enable`），断电恢复后自己爬起来。
+
+- 验证方法：`openssl s_client -connect <TELEMETRY_DOMAIN>:443 -servername <TELEMETRY_DOMAIN>`，预期 `Verify return code: 0 (ok)`；`tailscale funnel status` 显示 Funnel on；下发推流配置后看 `synced` 是 `true`、`errors` 为空，服务器日志收到数据包。
+
+- 代价与边界（再强调一次，选之前看完）：
+  - 推流走 Tailscale 的中继转发，带宽有限制（官方不公布数值），但推流流量很小（每秒几 KB），够用。
+  - 家里机器是单点：关机、断电、断网、系统更新重启，都会断推流；出门在外没法像服务器那样远程修。
+  - 域名是 `<MACHINE_NAME>.<TAILNET_NAME>.ts.net`，换机器或改机器名就要重新下发推流配置。
+
+### A.3 走不通的免费路线（避坑，写清楚为什么）
+
+#### A.3.1 Cloudflare Tunnel：收流口不能用
+
+- Cloudflare Tunnel 是什么：不是一台你租的服务器，是 Cloudflare 公司提供的一项免费隧道服务。你在家里机器上跑一个叫 `cloudflared` 的小软件，它主动向外连到 Cloudflare 的服务器；别人访问你的域名时，先到 Cloudflare，再由这条隧道回到你家里。家里不需要公网 IP、不开路由器端口。隧道本身不要钱，但公网地址要挂在你自己的域名下（域名一年几十块，DNS 要托管在 Cloudflare）。
+- 为什么收不了推流，有两个原因，各中一个都不行：
+  1. 公网 hostname 只走 HTTP(S)：Cloudflare 在边缘终结 TLS，车子的客户端证书到不了收流程序，mTLS 在第一步就断了。
+  2. TCP 模式要访客装客户端：隧道也能透传 TCP，但访客（这里是车子）必须装 `cloudflared` 或 WARP 客户端才能连，车子装不了。
+- 所以 Cloudflare Tunnel 可以用来发布普通网站，但接特斯拉推流这条路走不通，不要在这上面花时间。
+
+#### A.3.2 ngrok 免费档：不稳定，不推荐
+
+- ngrok 免费档给的 TCP 地址是随机的，地址和端口每次重启都变；而推流配置里的域名是写死的，每变一次就要重新下发配置，跟不上。
+- 免费档还有会话时长与速率限制，长期跑推流不可靠。
+
+#### A.3.3 trycloudflare.com 临时隧道：不能用
+
+- `cloudflared tunnel --url http://localhost:8445` 一行命令就能拿到一个 `https://随机词.trycloudflare.com` 的临时地址，不用账号、不用域名。
+- 但地址每次重启都变，且是 HTTP 模式（Cloudflare 终结 TLS），两个硬伤全占，不适合收推流，只适合临时测试。
+
+---
+
 ## 排障
 
 | 现象 | 原因 | 处理 |
@@ -641,6 +769,8 @@ curl -sk https://127.0.0.1:4443/api/1/vehicles/<VIN>/command/flash_lights \
 | `alert-outbox.json.tmp` 写报错 | 两个进程共用同一个 `.tmp` 文件名 | 临时文件名带进程号（模板已处理），不要改回共用名 |
 | 提醒漏发 / 重复发 | 状态标志卡住（如启动标志没清零） | 查 `state/watcher-state.json`，把卡住的标志改回正常值再重启 watcher |
 | 证书快到期 | Let's Encrypt 90 天有效期 | 续期后 reload nginx、重启收流服务，再检查车辆配置里的证书链要不要重发 |
+| Funnel 起了但车连不上 | 用了默认 HTTPS 模式，TLS 在 Tailscale 终结了 | 必须用 `--tcp=443` 透传模式重起 Funnel，`tailscale funnel status` 核对 |
+| Funnel 路线车突然断流 | `tailscale cert` 的证 90 天有效，没续期 | 重新领证并重启收流服务；把续期脚本加进 cron |
 
 ---
 
@@ -671,6 +801,7 @@ curl -sk https://127.0.0.1:4443/api/1/vehicles/<VIN>/command/flash_lights \
 - [ ] 开车实测一趟：启动、超速、停车提醒都对得上
 - [ ] 闪灯命令实测通过
 - [ ] 占位符都已按第 1 节换成自己的值，grep 查不到残留的 `<>`
+- [ ] （Funnel 路线）`tailscale funnel status` 显示 Funnel on，证书在有效期内
 
 ---
 
@@ -685,6 +816,8 @@ curl -sk https://127.0.0.1:4443/api/1/vehicles/<VIN>/command/flash_lights \
 | `templates/telemetry_consumer.py` | 消费端模板（快照 / 行程落盘） |
 | `templates/telemetry_trips.example.jsonl` | 行程记录示例（示例数据，与任何真实行程无关） |
 | `templates/server_config.json` | 收流服务配置模板 |
+| `templates/server_config.funnel-example.json` | 收流服务配置模板（Funnel 路线，证书走 `tailscale cert`） |
+| `templates/tailscale-cert-renew.sh` | Funnel 路线证书续期脚本（每天跑一次，变了才重启服务） |
 | `templates/fleet_telemetry_config.json` | 下发推流配置模板（180 字段） |
 | `templates/telemetry-fields-180.json` | 180 字段表（字段名与间隔） |
 | `templates/watcher-state.example.json` | watcher 状态文件结构示例 |

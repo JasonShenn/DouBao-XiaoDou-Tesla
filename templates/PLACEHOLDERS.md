@@ -10,6 +10,21 @@
 | `<APP_NAME>` | 应用名 / 部署代号 |
 | `<TELEMETRY_DOMAIN>` | 推流域名 |
 
+## templates/server_config.funnel-example.json（Funnel 路线）
+
+| 占位符 | 含义 |
+|---|---|
+| `<APP_NAME>` | 应用名 / 部署代号 |
+| `<TELEMETRY_DOMAIN>` | 推流域名，这里是 `<MACHINE_NAME>.<TAILNET_NAME>.ts.net` |
+
+## templates/tailscale-cert-renew.sh（Funnel 路线）
+
+| 占位符 | 含义 |
+|---|---|
+| `<TELEMETRY_DOMAIN>` | 推流域名，这里是 `<MACHINE_NAME>.<TAILNET_NAME>.ts.net` |
+| `<APP_NAME>` | 应用名 / 部署代号（服务名 `fleet-telemetry-<APP_NAME>` 用） |
+| `<SERVER_USER>` | 家里机器上的登录用户名（cron 里的脚本路径用） |
+
 ## templates/fleet_telemetry_config.json
 
 | 占位符 | 含义 |
