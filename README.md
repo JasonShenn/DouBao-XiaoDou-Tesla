@@ -725,7 +725,7 @@ chmod +x templates/tailscale-cert-renew.sh
 0 3 * * * /home/<SERVER_USER>/fleet-telemetry-<APP_NAME>/tailscale-cert-renew.sh
 ```
 
-- 步骤 8：家里机器防睡：系统设置里关掉睡眠、合盖不休眠、接通电源；Tailscale 与四个服务都设成开机自启（`systemctl enable`），断电恢复后自己爬起来。
+- 步骤 8：家里机器防睡：接通电源，关掉系统自动睡眠；Tailscale 与四个服务都设成开机自启（`systemctl enable`），断电恢复后自己爬起来。注意两点：只熄屏不影响推流，机器还在跑；但笔记本合盖默认是整机休眠，推流会断——MacBook 合盖要一直跑，需接电源 + 外接显示器 + 外接键盘鼠标走合盖模式（clamshell），或盖子开着只让屏幕熄；最省事是用 Mac mini、旧笔记本、NAS、树莓派这类不用合盖的机器。
 
 - 验证方法：`openssl s_client -connect <TELEMETRY_DOMAIN>:443 -servername <TELEMETRY_DOMAIN>`，预期 `Verify return code: 0 (ok)`；`tailscale funnel status` 显示 Funnel on；下发推流配置后看 `synced` 是 `true`、`errors` 为空，服务器日志收到数据包。
 
