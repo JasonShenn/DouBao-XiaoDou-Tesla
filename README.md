@@ -19,7 +19,7 @@
 - [阶段 6. 服务器、域名、证书与分流](#阶段-6-服务器域名证书与分流)
 - [阶段 7. 收流服务](#阶段-7-收流服务)
 - [阶段 8. 下发推流配置](#阶段-8-下发推流配置)
-- [阶段 9. 消费端：快照、行程、充电](#阶段-9-消费端快照行程充电)
+- [阶段 9. 消费端：快照与行程记录](#阶段-9-消费端快照与行程记录)
 - [阶段 10. 提醒机器人 watcher](#阶段-10-提醒机器人-watcher)
 - [阶段 11. 推送渠道接入](#阶段-11-推送渠道接入)
 - [阶段 12. 通知文案自定义](#阶段-12-通知文案自定义)
@@ -342,22 +342,32 @@ curl -sk https://127.0.0.1:4443/api/1/vehicles/fleet_telemetry_config -X POST \
 
 ---
 
-## 阶段 9. 消费端：快照、行程、充电
+## 阶段 9. 消费端：快照与行程记录
 
 - 步骤 1：装 consumer（模板 `templates/telemetry_consumer.py`），每秒读一次收流服务的 journal。
-- 步骤 2：它维护 3 份文件（都在 `state/` 下，0600 权限，不含 VIN、令牌、原始包）。
+- 步骤 2：它维护 3 份文件（都在 `state/` 下，0600 权限）。
 
 | 文件 | 内容 |
 |---|---|
 | `telemetry_latest.json` | 最新快照：电量、续航、胎压、位置、车速、锁车、充电、温度、里程 |
-| `telemetry_trips.jsonl` | 一次开车一条（挂 D/R 或车速 > 0.5 km/h 开始，停稳满 5 分钟落盘） |
-| `telemetry_charging.jsonl` | 一次充电一条 |
+| `telemetry_trips.jsonl` | 一次开车一条行程记录（见下） |
+| `telemetry_trip_open.json` | 正在开的这趟（断点续记用，落盘后删除） |
 
+- 行程落盘规则（模板里是真实逻辑）：挂 D/R 档或车速 > 0.5 km/h 开一趟；停稳满 5 分钟落盘，`end_time` 取最后一次动的时间（停车后等的 5 分钟不算进行程时长）；不足 0.1 公里且不足 1 分钟的行程丢弃；耗电按电量差 × 电池容量估算（`BATTERY_KWH`，按自己车型改，模板默认 57）；轨迹每 10 秒采一个点；consumer 重启时读到没落盘的 trip，停稳已满 5 分钟就按最后一次动的时间估算落盘（`estimated: true`）。
+- 行程记录只存经纬度，不存地名：地名是发提醒时现查高德逆地理编码得到的（阶段 12 与 bark_push 模板）。
+- 一条行程记录长这样（模板 `templates/telemetry_trips.example.jsonl`，示例数据，与任何真实行程无关，轨迹略）：
+
+```json
+{"id": "trip-20261120-083000", "start_time": "2026-11-20T08:30:00+08:00", "end_time": "2026-11-20T08:47:20+08:00", "distance_km": 12.5, "duration_sec": 1040, "avg_speed_kmh": 43.3, "max_speed_kmh": 88.0, "start_soc": 80, "end_soc": 75, "energy_kwh": 2.9, "estimated": false, "trace": [...]}
+```
+
+- 注意：充电会话落盘（`telemetry_charging.jsonl`，一次充电一条）模板还没写，只有快照里的充电状态是现成的；先跑通快照与行程，充电落盘后续再补。
 - 步骤 3：装 systemd 服务（模板 `templates/systemd/fleet-telemetry-doubao-consumer.service`）并启动。
 - 注意：V 数据包是增量形态（每包只带变化字段），要跨包合并；`journalctl -o json` 会丢大包，必须用 `-o cat --show-cursor` + `--after-cursor` 增量读。
 
 **验证方法**：`cat /home/<SERVER_USER>/fleet-telemetry-<APP_NAME>/state/telemetry_latest.json`，
 预期 `updated_at` 是最近一分钟内的，且电量、续航与车上显示一致。
+开车实测一趟：停车满 5 分钟后 `tail -1 .../state/telemetry_trips.jsonl` 应多一条，里程与用时对得上。
 
 ---
 
@@ -672,7 +682,8 @@ curl -sk https://127.0.0.1:4443/api/1/vehicles/<VIN>/command/flash_lights \
 | `templates/tesla_watcher.py` | 提醒机器人 watcher 模板 |
 | `templates/bark_push.py` | Bark 推送脚本模板（含文案模板、夜间缓冲、测试开关） |
 | `templates/push_channels.py` | 12 种推送渠道函数模板 |
-| `templates/telemetry_consumer.py` | 消费端模板（快照 / 行程 / 充电） |
+| `templates/telemetry_consumer.py` | 消费端模板（快照 / 行程落盘） |
+| `templates/telemetry_trips.example.jsonl` | 行程记录示例（示例数据，与任何真实行程无关） |
 | `templates/server_config.json` | 收流服务配置模板 |
 | `templates/fleet_telemetry_config.json` | 下发推流配置模板（180 字段） |
 | `templates/telemetry-fields-180.json` | 180 字段表（字段名与间隔） |
