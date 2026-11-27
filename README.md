@@ -4,6 +4,10 @@
 > 本教程已在真车跑通。照着做，一台车、一台服务器、一个豆包就能跑起来。
 > 文中所有服务器地址、域名、密钥、位置等都用占位符表示，数字均为示例数据，部署时换成你自己的。
 
+以下为iPhone Bark即时推送通知示例图：
+
+![iPhone Bark 即时推送通知示例](docs/bark-push-example.jpg)
+
 ## 目录
 
 - [1. 占位符对照表](#1-占位符对照表)
@@ -780,7 +784,7 @@ chmod +x templates/tailscale-cert-renew.sh
 - 每套身份只能属于一个应用：不要抄别人的密钥、令牌、私钥，抄了等于拿别人的钥匙开车，还会把对方的链路顶掉。
 - 控制接口只放给可信的人用；敏感命令每次单独确认，不进自动化。
 - 不要清推流状态、不要删 journal、不要没事重推配置。
-- 公开仓库里不要放任何截图（手机截图、服务器截图都不要），示意图用文字描述。
+- 公开仓库里不要放含隐私信息的截图；示例图里的位置、地名、账号等须先打码（本教程仅放一张已打码的推送示例图，见目录上方）。
 - 费用：中国区无账单入口、无需绑卡，免费 Discovery 档够用。
 
 ---
@@ -810,6 +814,7 @@ chmod +x templates/tailscale-cert-renew.sh
 | 文件 | 说明 |
 |---|---|
 | `README.md` | 本教程 |
+| `docs/bark-push-example.jpg` | iPhone Bark 即时推送通知示例图（停车位置已打码） |
 | `templates/tesla_watcher.py` | 提醒机器人 watcher 模板 |
 | `templates/bark_push.py` | Bark 推送脚本模板（含文案模板、夜间缓冲、测试开关） |
 | `templates/push_channels.py` | 12 种推送渠道函数模板 |
