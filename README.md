@@ -8,8 +8,13 @@
 
 ![iPhone Bark 即时推送通知示例](docs/bark-push-example.jpg)
 
+## 鸣谢
+
+本项目由 MuseDrive 创作者一起共同探讨研究完成并落地，MuseDrive 作者链接：[muse-lab-cn/MuseDrive](https://github.com/muse-lab-cn/MuseDrive)
+
 ## 目录
 
+- [鸣谢](#鸣谢)
 - [1. 占位符对照表](#1-占位符对照表)
 - [2. 推送渠道对比表](#2-推送渠道对比表)
 - [3. 架构](#3-架构)
