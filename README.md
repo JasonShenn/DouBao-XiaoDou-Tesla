@@ -1,5 +1,9 @@
 # 豆包&小豆 + 特斯拉推流推送通知部署（从 0 到 1）
 
+## 鸣谢
+
+本项目由 MuseDrive 创作者一起共同探讨研究完成并落地，MuseDrive 作者链接：[muse-lab-cn/MuseDrive](https://github.com/muse-lab-cn/MuseDrive)
+
 > 让豆包（AI 助手）接管你的特斯拉：车主动推数据到你的服务器，豆包按规则发提醒到手机。
 > 本教程已在真车跑通。照着做，一台车、一台服务器、一个豆包就能跑起来。
 > 文中所有服务器地址、域名、密钥、位置等都用占位符表示，数字均为示例数据，部署时换成你自己的。
@@ -7,10 +11,6 @@
 以下为iPhone Bark即时推送通知示例图：
 
 ![iPhone Bark 即时推送通知示例](docs/bark-push-example.jpg)
-
-## 鸣谢
-
-本项目由 MuseDrive 创作者一起共同探讨研究完成并落地，MuseDrive 作者链接：[muse-lab-cn/MuseDrive](https://github.com/muse-lab-cn/MuseDrive)
 
 ## 目录
 
