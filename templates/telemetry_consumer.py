@@ -283,7 +283,8 @@ def main():
             trips.maybe_close(time.time())
         except Exception as exc:  # 单轮出错不退出，下一秒继续
             print(json.dumps({"error": str(exc), "at": now_iso()}, ensure_ascii=False), flush=True)
-        time.sleep(1)
+        # 2026-11-28 更新：轮询间隔 1 秒改为 0.5 秒，收流更快
+        time.sleep(0.5)
 
 
 if __name__ == "__main__":

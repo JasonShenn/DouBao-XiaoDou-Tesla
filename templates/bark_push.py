@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 """Resident Bark pusher for Doubao-owned Tesla alerts.
 
-The script reads state/alert-outbox.json every 2 seconds, sends pending alerts
+The script reads state/alert-outbox.json every 0.1 seconds, sends pending alerts
 to Bark, and marks them sent. It only reads Doubao-owned snapshot/state
 files; it never wakes the vehicle and never touches Muse files.
+
+更新 2026-11-28：开车途中提醒（启动/超速/急刹/低续航）改 critical 级别 + alarm 提示音，
+急刹再加 call 连响 30 秒；轮询间隔 0.5 秒改为 0.1 秒。
 
 Bark device_key lives in credentials/bark_push.json. Leave
 it empty until the user supplies it; --dry-run prepares messages without calling Bark.
@@ -35,6 +38,9 @@ TEST_PUSH_SWITCH_PATH = os.path.join(STATE_DIR, "allow_test_push")
 BARK_TITLE = "<BARK_TITLE>"  #  Bark 通知标题，所有提醒共用，例如：小豆提醒
 BARK_ICON_URL = "<AVATAR_URL>"  #  Bark 通知头像图片直链，须是公网能直接打开的图片地址
 TIME_SENSITIVE_KINDS = {"start", "speeding", "harsh_brake", "low_range"}
+# 2026-11-28 更新：开车途中会触发的提醒走 critical（穿透静音与勿扰，必响铃），急刹再加 call=1 连响 30 秒
+CRITICAL_KINDS = {"start", "speeding", "harsh_brake", "low_range"}
+CALL_KINDS = {"harsh_brake"}
 ACTIVE_KINDS = {"park", "charge_start", "charge_complete", "charge_stop"}
 NIGHT_START_MINUTES = 23 * 60 + 30
 NIGHT_END_HOUR = 7
@@ -46,7 +52,7 @@ HOME_CHARGE_RADIUS_M = 300.0
 BATTERY_USABLE_KWH = 57.0  # 示例：可用电量，按车型改
 PEAK_PRICE = 0.60  # 示例电价：峰时每度 0.60 元，按当地实际电价改
 VALLEY_PRICE = 0.30  # 示例电价：谷时每度 0.30 元，按当地实际电价改
-POLL_INTERVAL_S = 0.5
+POLL_INTERVAL_S = 0.1  # 2026-11-28 更新：0.5 秒改为 0.1 秒，提醒推出更快
 RETRY_AFTER_SECONDS = 3.0
 AMAP_TIMEOUT_S = 8.0
 WEATHER_TIMEOUT_S = 4.0
@@ -503,6 +509,8 @@ def build_text(alert, snap, state):
 # ---------------------------- Bark ----------------------------
 
 def bark_level(kind):
+    if kind in CRITICAL_KINDS:
+        return "critical"
     return "timeSensitive" if kind in TIME_SENSITIVE_KINDS else "active"
 
 
@@ -511,18 +519,23 @@ def is_night(now_dt):
     return minutes >= NIGHT_START_MINUTES or now_dt.hour < NIGHT_END_HOUR
 
 
-def bark_send(device_key, title, body, level, dry_run):
+def bark_send(device_key, title, body, level, dry_run, sound="alarm", call=0):
     if dry_run:
-        return {"dry_run": True, "title": title, "body": body, "level": level, "icon": BARK_ICON_URL}
+        return {"dry_run": True, "title": title, "body": body, "level": level,
+                "icon": BARK_ICON_URL, "sound": sound, "call": call}
     if not device_key:
         raise RuntimeError("Bark device_key is not configured")
-    payload = json.dumps({
+    data = {
         "device_key": device_key,
         "title": title,
         "body": body,
         "level": level,
         "icon": BARK_ICON_URL,
-    }).encode("utf-8")
+        "sound": sound,
+    }
+    if call:
+        data["call"] = 1
+    payload = json.dumps(data).encode("utf-8")
     req = urllib.request.Request(
         "https://api.day.app/push",
         data=payload, method="POST",
@@ -615,7 +628,8 @@ def process_once(dry_run):
 
         level = bark_level(kind)
         try:
-            result = bark_send(config.get("bark_key", ""), BARK_TITLE, text, level, dry_run)
+            result = bark_send(config.get("bark_key", ""), BARK_TITLE, text, level, dry_run,
+                               sound="alarm", call=1 if kind in CALL_KINDS else 0)
         except Exception as exc:
             alert["status"] = "pending"
             alert["last_error"] = str(exc)

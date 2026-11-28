@@ -28,7 +28,8 @@ SPEEDING_TOLERANCE_KMH = 5.0
 SPEEDING_MIN_INTERVAL_S = 60
 SPEEDING_REARM_KMH = 3.0
 MOVING_MPH = 0.5
-WATCH_INTERVAL_S = 1.0
+# 2026-11-28 更新：轮询间隔 1.0 秒改为 0.3 秒，提醒发现更快
+WATCH_INTERVAL_S = 0.3
 # Fallback segment limits only; official per-road limits are not available.
 LIMITS = {"highway": 120, "elevated": 80, "city": 60, "feeder": 40}
 
