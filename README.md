@@ -1,6 +1,6 @@
 ## 鸣谢
 
-### 本项目由 MuseDrive 创作者一起共同探讨研究完成并落地，MuseDrive 作者链接：[muse-lab-cn/MuseDrive](https://github.com/muse-lab-cn/MuseDrive)
+# 本项目由 MuseDrive 创作者一起共同探讨研究完成并落地，MuseDrive 作者链接：[muse-lab-cn/MuseDrive](https://github.com/muse-lab-cn/MuseDrive)
 
 # 豆包&小豆 + 特斯拉推流推送通知部署（从 0 到 1）
 
